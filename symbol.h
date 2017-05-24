@@ -13,7 +13,7 @@ struct symbol
   float nbPasH; // Largeur de la boîte en pas
 	float nbPixelNoir; // Ratio de pixels noirs
 	size_t nbCol; // Nombre de barres verticales 
-	int typeNote; // Type de l'élément
+	enum Type typeNote; // Type de l'élément
 };
 void print_symbol(struct symbol * ptr_symbol);
 void print_list_symbol(struct list * list_symbol);
