@@ -74,11 +74,11 @@ void clean_list_symbol(struct s_matrix * mat, struct list* list)
 }
 
 struct symbol * create_symbol( struct s_matrix* mat, size_t i, size_t j,
-    size_t pas)
+    size_t pas, enum Couleur col_source,enum Couleur col_res)
 {
   int nb_pixels = 0;
   struct symbol * ptr_symbol = symbol_init(i, j);
-  propa_symbol(mat, i, j, ptr_symbol->box, &nb_pixels);
+  propa_symbol(mat, i, j, ptr_symbol->box, &nb_pixels,col_source, col_res);
   ptr_symbol->nbPasV = (1.0 * ptr_symbol->box->h) 
     / (1.0 * pas);
   ptr_symbol->nbPasH = (1.0 * ptr_symbol->box->w)
@@ -140,7 +140,7 @@ struct partition * analyse(struct s_matrix* mat, struct list* histo)
         {
           struct list * ptr_elm = malloc(sizeof(struct list));
           ptr_elm->data = create_symbol(mat, tab_lignes[i], k, 
-              partition->i_ligne);
+              partition->i_ligne, ROUGE, VERT);
           list_insert_symbol(ptr_portee->symboles, ptr_elm);
         } 
       }
@@ -152,7 +152,7 @@ struct partition * analyse(struct s_matrix* mat, struct list* histo)
             if (mat->data[l*mat->cols + k] == NOIR)
             {
               struct list * ptr_elm = malloc(sizeof(struct list));
-              ptr_elm->data = create_symbol(mat, l, k, partition->i_ligne);
+              ptr_elm->data = create_symbol(mat, l, k, partition->i_ligne, NOIR,VERT);
               list_insert_symbol(ptr_portee->symboles, ptr_elm);
             }
           }
@@ -163,4 +163,132 @@ struct partition * analyse(struct s_matrix* mat, struct list* histo)
     partition->portees[cpt++] = ptr_portee;
   }
   return partition;
+}
+
+void analyse_symbol(struct partition * partition, struct portee * portee, struct symbol * symbol, enum Type type)
+{
+	switch (type)
+	{
+		case(BARRE):
+			break;
+		case(CLESOL):
+			portee->cle = SOL;
+			break;
+		case(BEMOL):
+			size_t i = find_height_box(partition, portee, symbol);
+			portee->bemol[i]= 1;
+			break;
+		case(QUATRE):
+		case(TROIS):
+			break;
+		case(DSOUPIR):
+			break;
+		case(NOTE):
+			append_note(portee->note,symbol);
+			break;
+		case(CLEFA):
+			portee->clee = FA;
+		case(POINT):
+			break;
+		case(SOUPIR):
+		case(PAUSE):
+			break;
+	}
+}
+size_t find_height_box(struct partition * partition, struct portee * portee, struct symbol * symbol)
+{
+	enum Note res;
+	for(size_t i = 0 ; i < 5; i++)
+	{
+		if(box->x + box->h < partition->i_ligne/4)
+		{
+			if(portee->cle == SOL)
+			{
+				switch(i)
+				{
+					case(1):
+						res = SI;
+						break;
+					case(2):
+						res = DO;
+						break;
+					case(3):
+						res = LA;
+						break;
+					case(4)
+						res = FA;
+						break;
+				}
+			}
+			else
+			{
+				switch(i)
+				{
+					case(1):
+						res = SOL;
+						break;
+					case(2):
+						res = MI;
+						break;
+					case(3):
+						res = DO;
+						break;
+					case(4):
+						res = LA;
+						break;
+				}
+			}
+		}
+		else
+		{
+			if(portee->cle == SOL)
+				{
+					switch(i)
+					{
+						case(0):
+							res = FA;
+							break;
+						case(1):
+							res = RE;
+							break;
+						case(2):
+							res = SI;
+							break;
+						case(3):
+							res = SOL;
+							break;
+						case(4):
+							res = MI;
+							break;
+
+					}
+				}
+			else
+			{
+				switch(i)
+				{
+					case(0):
+						res = LA;
+						break;
+					case(1):
+						res = FA;
+						break;
+					case(2):
+						res = RE;
+						break;
+					case(3):
+						res = SI;
+						break;
+					case(4):
+						res = SOL;
+						break;
+				}
+			}
+		}
+		return (size_t )res;
+}
+void append_note(struct portee * portee, struct symbol * symbol,struct mat * mat)
+{
+	
+	
 }

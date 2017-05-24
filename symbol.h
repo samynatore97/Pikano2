@@ -25,9 +25,10 @@ struct portee
 {
   size_t tab_lignes[5]; // Tableau des lignes hautes de la portée
   enum Note cle; // Clé de la portée
-  enum Note diese[7]; // Tableau des dièses à la clé
-  enum Note bemol[7]; // Tableau des bémols à la clé
+  int Note diese[7]; // Tableau des dièses à la clé
+  int bemol[7]; // Tableau des bémols à la clé
   struct list* symboles; // Liste des symboles contenus dans la portée
+  struct list * notes;
 };
 
 struct partition {
@@ -36,6 +37,11 @@ struct partition {
   size_t taille; // Taille du tableau de portées
   struct portee** portees; // Tableau des portées
 };
-
+struct note
+{
+ char* valeur;
+ SDL_Rect * box;
+ int duree;
+}
 struct partition * analyse(struct s_matrix* mat, struct list* list);
 # endif

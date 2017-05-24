@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
       while(ptr != NULL)
       {
         struct symbol* ptr_data = (struct symbol*)ptr->data;
-      // enum Type type_symb = get_type(reseau, topologie, nb_couches, 
-        //   ptr_data);
+       enum Type type_symb = get_type(reseau, topologie, nb_couches, 
+          ptr_data);
         SDL_Surface* image =
           genImgFromMat(get_mat_rect_xN(prey, 
                 ptr_data->box, 4));
@@ -80,6 +80,10 @@ int main(int argc, char *argv[])
         sleep(2);
         SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
         display_image(window, image);
+		  analyse_symbol(partition, partition->portee[i],type_symb);
+
+			
+
         ptr = ptr->next;
       }
     }

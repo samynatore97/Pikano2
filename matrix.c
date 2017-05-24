@@ -183,12 +183,11 @@ void propagation(struct s_matrix *mat,size_t i , size_t j)
 }
 
 void propa_symbol(struct s_matrix* mat,
-    size_t i, size_t j, SDL_Rect* box, int* pixels)
+    size_t i, size_t j, SDL_Rect* box, int* pixels,enum Couleur col_source, enum Couleur col_res)
 {
-  if (mat->data[i*mat->cols+j] == ROUGE
-      || mat->data[i*mat->cols+j] == NOIR)
+  if (mat->data[i*mat->cols+j] == col_source)
   {
-    mat->data[i*mat->cols+j] = VERT;
+    mat->data[i*mat->cols+j] = col_res;
     (*pixels)++;
     if (box->x > (int) i 
           || box->x < (int) i - box->h + 1)
@@ -199,13 +198,13 @@ void propa_symbol(struct s_matrix* mat,
       box->w++;
     box->y = MIN((int)j, box->y);
     if (i < mat->lines - 1)
-      propa_symbol(mat, i+1, j, box, pixels);
+      propa_symbol(mat, i+1, j, box, pixels,col_source, col_res);
     if (i > 0)
-      propa_symbol(mat, i-1, j, box, pixels);
+      propa_symbol(mat, i-1, j, box, pixels, col_source, col_res);
     if (j < mat->cols - 1)
-      propa_symbol(mat, i, j+1, box, pixels);
+      propa_symbol(mat, i, j+1, box, pixels, col_source, col_res);
     if (j > 0)
-      propa_symbol(mat, i, j-1, box, pixels);
+      propa_symbol(mat, i, j-1, box, pixels, col_source, col_res);
   }
 }
 

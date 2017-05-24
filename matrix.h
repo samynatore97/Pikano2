@@ -41,7 +41,7 @@ struct s_matrix* get_mat_rect_xN(struct s_matrix* mat, SDL_Rect* box,
     int zoom);
 void propagation(struct s_matrix* partition,size_t i , size_t j);
 void propa_symbol(struct s_matrix* mat, size_t i ,
-    size_t j, SDL_Rect* box, int* pixels);
+    size_t j, SDL_Rect* box, int* pixels,enum Couleur col_src, enum Couleur col_res);
 size_t count_col_symbol(struct s_matrix* mat, SDL_Rect* box);
 struct list * list_lines(struct s_matrix* mat);
 void repare_lines(struct s_matrix *mat, struct list *list);
