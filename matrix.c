@@ -299,3 +299,24 @@ void matrix_free(struct s_matrix *mat)
 	else
 		errx(1,"Could not free matrix (NULL)");
 }
+
+struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box)
+{
+	struct list * res = malloc(sizeof(struct list));
+	list_init(res);
+	for(int i = box->x ; i< box->x + box->h; i++)
+	{
+		for(int j = box->y; j < box->y + box->w; j++)
+		{
+			if (mat->data[i* mat->cols + j] == VERT)
+			{
+				SDL_rect * rect = malloc(sizeof(SDL_Rect));
+				propa_symbol(mat, i, j, rect , &0, VERT, ROSE);
+				struct list * elm = malloc(sizeof(struct list));
+				elm->data = rect;
+				list_push_front(res,elm);
+			}
+		}
+	}
+	return res;
+}

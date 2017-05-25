@@ -10,7 +10,7 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
-enum Couleur {NOIR, BLANC, BLEU1, ROUGE, VERT, VERT2, BLEU2,};
+enum Couleur {NOIR, BLANC, BLEU1, ROUGE, VERT, VERT2, BLEU2, ROSE};
 
 // Structure definition
 struct s_matrix
@@ -51,6 +51,7 @@ struct s_matrix * delete_lines(struct s_matrix* mat, struct list* list);
 struct s_matrix* color_graph(struct s_matrix* mat, struct list* list);
 struct s_matrix * delete_vert_graph(struct s_matrix * mat, struct list * list);
 void restore_rect(struct s_matrix *mat,SDL_Rect * box);
+struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box);
 // Memory Free
 void matrix_free();
 # endif
