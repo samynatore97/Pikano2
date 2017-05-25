@@ -35,13 +35,18 @@ struct partition {
   size_t h_ligne; // Hauteur en pixels d'une ligne de portée
   size_t i_ligne; // Hauteur en pixels de l'interligne d'une portée
   size_t taille; // Taille du tableau de portées
-  struct portee** portees; // Tableau des portées
+  struct portee** portees;// Tableau des portées
+  char* encodage;
 };
+
+enum Type_N {NOIR, BLANC, CROCH, DCROCH};
+
 struct note
 {
- char* valeur;
+ enum Type_note t_note;
  SDL_Rect * box;
  int duree;
 }
+
 struct partition * analyse(struct s_matrix* mat, struct list* list);
 # endif

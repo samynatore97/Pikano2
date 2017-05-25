@@ -63,27 +63,53 @@ int main(int argc, char *argv[])
     fclose(file);*/
     size_t nb_couches = 5;
     size_t topologie[5] = {4,120,90,60,11};
-    //struct neurone** reseau = load_neurons(&nb_couches, topologie);
+    struct neurone** reseau_symb = load_neurons(&nb_couches, topologie);
     for(size_t i = 0; i < partition->taille; i++)
     {
-      struct list* ptr = partition->portees[i]->symboles->next;
+      struct portee * portee = partition->portee[i];
+      struct list* ptr = portee->symboles->next;
       while(ptr != NULL)
       {
-        struct symbol* ptr_data = (struct symbol*)ptr->data;
-       enum Type type_symb = get_type(reseau, topologie, nb_couches, 
-          ptr_data);
-        SDL_Surface* image =
+        struct symbol* symbol = (struct symbol*)ptr->data;
+        enum Type type_symb = get_type(reseau, topologie, nb_couches, 
+          symbol);
+        /*SDL_Surface* image =
           genImgFromMat(get_mat_rect_xN(prey, 
-                ptr_data->box, 4));
+                symbol->box, 4));
         display_image(window,image);
-        //printf("Type symbole : %s", to_string(type_symb));
+        printf("Type symbole : %s", to_string(type_symb));
         sleep(2);
         SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
-        display_image(window, image);
-		  analyse_symbol(partition, partition->portee[i],type_symb);
+        display_image(window, image);*/
 
-			
-
+      	switch (type)
+      	{
+		      case(BARRE):
+			      break;
+		      case(CLESOL):
+			      portee->cle = SOL;
+			      break;
+		      case(BEMOL):
+			      size_t i = find_height_box(partition, portee, symbol);
+			      portee->bemol[i]= 1;
+			      break;
+		      case(QUATRE):
+		      case(TROIS):
+			      break;
+		      case(DSOUPIR):
+			      break;
+		      case(NOTE):
+			      append_note(reseau, portee, symbol);
+			      break;
+		      case(CLEFA):
+			      portee->cle = FA;
+            break;
+		      case(POINT):
+			      break;
+		      case(SOUPIR):
+		      case(PAUSE):
+			      break;
+	      }
         ptr = ptr->next;
       }
     }

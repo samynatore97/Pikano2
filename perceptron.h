@@ -12,11 +12,11 @@ struct neurone
   double erreur;
 };
 
-#define SEUIL_APP 0.05 /* Erreur moyenne tolérée en sortie */
+#define SEUIL_APP 0.0001 /* Erreur moyenne tolérée en sortie */
 #define SEUIL     0.5 /* Seuil pour vrai/faux */
 
 #define  MAX_ITER2  100000
-#define EPSILON 1 /* Pas d'apprentissage */
+#define EPSILON 0.1 /* Pas d'apprentissage */
 
 int alloc_reseau(struct neurone*** n, size_t* topologie, 
     size_t nb_couches);
