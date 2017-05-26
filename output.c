@@ -24,7 +24,7 @@ struct list * genListFromFile(char * path)
 		int r ;
 		r = sscanf(line,"%f %f %f %zu %d", &(ptr_symbol->nbPasV),
         &(ptr_symbol->nbPasH), &(ptr_symbol->nbPixelNoir),
-        &(ptr_symbol->nbCol),&(ptr_symbol->typeNote));
+        &(ptr_symbol->nbCol),(int*)&(ptr_symbol->typeNote));
 		if (r != 5)
 			err(3,"error while writing");
     elm->data = ptr_symbol;
@@ -57,8 +57,8 @@ void load_neurons(struct neurone** n, size_t* topologie, size_t nb_couches)
   file =fopen("reseau.txt", "r");
   if (file == NULL)
     errx(3, "Couldn't open file reseau.txt");
-  char line[LINE] = "";
-  /*fgets(line, LINE, file);
+  /*char line[LINE] = "";
+  fgets(line, LINE, file);
   sscanf(line, "%zu", nb_couches);
   topologie = realloc(topologie,(*nb_couches) * sizeof(size_t));
   fgets(line, LINE, file);
@@ -78,7 +78,7 @@ void load_neurons(struct neurone** n, size_t* topologie, size_t nb_couches)
   fclose(file);
 }
 
-enum Type get_type(struct neurone** n, size_t* topologie,
+enum Type get_type_symb(struct neurone** n, size_t* topologie,
     size_t nb_couches, struct symbol* symbol)
 {
   double* valeurs = malloc(sizeof(double) * 4);
@@ -93,7 +93,7 @@ enum Type get_type(struct neurone** n, size_t* topologie,
 
 void save_img(SDL_Surface * img,char * name)
 {
-  FILE * fichier = fopen(name, "w+");
+  //FILE * fichier = fopen(name, "w+");
   SDL_SaveBMP(img, name);
 }
 

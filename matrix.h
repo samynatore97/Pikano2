@@ -42,6 +42,8 @@ struct s_matrix* get_mat_rect_xN(struct s_matrix* mat, SDL_Rect* box,
 void propagation(struct s_matrix* partition,size_t i , size_t j);
 void propa_symbol(struct s_matrix* mat, size_t i ,
     size_t j, SDL_Rect* box, int* pixels,enum Couleur col_src, enum Couleur col_res);
+void propa_note(struct s_matrix* mat, size_t i ,
+    size_t j, SDL_Rect* limit, SDL_Rect* box, int* pixels,enum Couleur col_src, enum Couleur col_res);
 size_t count_col_symbol(struct s_matrix* mat, SDL_Rect* box);
 struct list * list_lines(struct s_matrix* mat);
 void repare_lines(struct s_matrix *mat, struct list *list);
@@ -51,7 +53,7 @@ struct s_matrix * delete_lines(struct s_matrix* mat, struct list* list);
 struct s_matrix* color_graph(struct s_matrix* mat, struct list* list);
 struct s_matrix * delete_vert_graph(struct s_matrix * mat, struct list * list);
 void restore_rect(struct s_matrix *mat,SDL_Rect * box);
-struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box);
+//struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box);
 // Memory Free
 void matrix_free();
 # endif

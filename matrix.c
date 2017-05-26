@@ -50,13 +50,13 @@ void  draw_rect(struct s_matrix *mat, SDL_Rect* box )
 {
 	for (int i = box->x; i <= box->x + box->h ;i++)
   {
-		mat->data[i*mat->cols+ box->y] = BLEU1 ;
-		mat->data[i*mat->cols + box->y + box->w] = BLEU1 ;
+		mat->data[i*mat->cols+ box->y] = VERT ;
+		mat->data[i*mat->cols + box->y + box->w] = VERT ;
   }
 	for (int j = box->y ;j<= box->y + box->w ;j++)
 	{
-		mat->data[box->x*mat->cols + j] = BLEU1;
-		mat->data[(box->x+box->h)*mat->cols + j] = BLEU1 ;
+		mat->data[box->x*mat->cols + j] = VERT;
+		mat->data[(box->x+box->h)*mat->cols + j] = VERT ;
 	}
 }
 
@@ -208,6 +208,32 @@ void propa_symbol(struct s_matrix* mat,
   }
 }
 
+void propa_note(struct s_matrix* mat, size_t i, size_t j, SDL_Rect* limit, SDL_Rect* box, 
+	int* pixels,enum Couleur col_source, enum Couleur col_res)
+{
+  if (mat->data[i*mat->cols+j] == col_source)
+  {
+    mat->data[i*mat->cols+j] = col_res;
+    (*pixels)++;
+    if (box->x > (int) i 
+          || box->x < (int) i - box->h + 1)
+      box->h++;
+    box->x = MIN((int)i, box->x);
+    if (box->y > (int) j
+        || box->y < (int) j - box->w + 1)
+      box->w++;
+    box->y = MIN((int)j, box->y);
+    if (i < limit->x + limit->h - 1)
+      propa_note(mat, i+1, j, limit, box, pixels,col_source, col_res);
+    if (i > limit->x)
+      propa_note(mat, i-1, j, limit, box, pixels, col_source, col_res);
+    if (j < limit->y + limit->w - 1)
+      propa_note(mat, i, j+1, limit, box, pixels, col_source, col_res);
+    if (j > limit->y)
+      propa_note(mat, i, j-1, limit,box, pixels, col_source, col_res);
+  }
+}
+
 size_t count_col_symbol(struct s_matrix* mat, SDL_Rect* box)
 {
   size_t nbcols = 0;
@@ -300,7 +326,7 @@ void matrix_free(struct s_matrix *mat)
 		errx(1,"Could not free matrix (NULL)");
 }
 
-struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box)
+/*struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box)
 {
 	struct list * res = malloc(sizeof(struct list));
 	list_init(res);
@@ -319,4 +345,4 @@ struct list * create_list_note(struct s_matrix * mat, SDL_Rect * box box)
 		}
 	}
 	return res;
-}
+}*/

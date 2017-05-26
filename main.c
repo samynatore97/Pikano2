@@ -30,92 +30,151 @@ int main(int argc, char *argv[])
     //display_image(genImgFromMat(mat_color_lines));
 	  //sleep(5);
 	  struct s_matrix *prey = color_graph(mat_color_lines, lst_lines);
-	  SDL_Surface *graph = genImgFromMat(prey);
-
     struct partition * partition = analyse(prey, lst_lines);
     SDL_Surface *im = genImgFromMat(prey);
     save_img(im,"prey");
-   /* FILE* file = NULL;
+    FILE* file = NULL;
     replace_extension(path);
     file = fopen(path, "w");
     if (file == NULL)
       errx(3, "Couldn't open file %s\n", path);
-    for(size_t i = 0; i< partition->taille; i++)
+   /* for(size_t i = 0; i< partition->taille; i++)
     {
-      struct list* ptr = partition->portees[i]->symboles->next;
-      while(ptr != NULL)
-      {
-        struct symbol* ptr_data = (struct symbol*)ptr->data;
-        SDL_Surface* image =
-          genImgFromMat(get_mat_rect_xN(prey, 
-                ptr_data->box, 4));
-        display_image(window,image);
-        printf("Type symbole : ");
-        scanf("%d", 
-            &(ptr_data->typeNote));
-        fprintf(file,"%f %f %f %zu %d\n", ptr_data->nbPasV, ptr_data->nbPasH,
-            ptr_data->nbPixelNoir, ptr_data->nbCol, ptr_data->typeNote);
-        SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
-        display_image(window, image);
-        ptr = ptr->next;
+        struct list* ptr = partition->portees[i]->symboles->next;
+        while(ptr != NULL)
+        {
+          struct symbol* ptr_data = (struct symbol*)ptr->data;
+          SDL_Surface* image =
+            genImgFromMat(get_mat_rect_xN(prey, 
+                  ptr_data->box, 4));
+          display_image(window,image);
+          printf("Type symbole : ");
+          scanf("%d", 
+              &(ptr_data->typeNote));
+          fprintf(file,"%f %f %f %zu %d\n", ptr_data->nbPasV, ptr_data->nbPasH,
+              ptr_data->nbPixelNoir, ptr_data->nbCol, ptr_data->typeNote);
+          SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
+          display_image(window, image);
+          ptr = ptr->next;
+        }
       }
-    }
-    fclose(file);*/
-    size_t nb_couches = 5;
-    size_t topologie[5] = {4,120,90,60,11};
-    struct neurone** reseau_symb = load_neurons(&nb_couches, topologie);
-    for(size_t i = 0; i < partition->taille; i++)
-    {
-      struct portee * portee = partition->portee[i];
-      struct list* ptr = portee->symboles->next;
-      while(ptr != NULL)
-      {
-        struct symbol* symbol = (struct symbol*)ptr->data;
-        enum Type type_symb = get_type(reseau, topologie, nb_couches, 
-          symbol);
-        /*SDL_Surface* image =
-          genImgFromMat(get_mat_rect_xN(prey, 
-                symbol->box, 4));
-        display_image(window,image);
-        printf("Type symbole : %s", to_string(type_symb));
-        sleep(2);
-        SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
-        display_image(window, image);*/
+      fclose(file);*/
+      size_t nb_couches_s = 5;
+      size_t topologie_s[5] = {4,120,90,60,11};
+      struct neurone** res_s;
+      alloc_reseau(&res_s, topologie_s, nb_couches_s);
+      load_neurons(res_s, topologie_s, nb_couches_s);
+      //size_t nb_couches_notes =;
+      //size_t topologie_notes =;
+      //struct neurones** res_notes = load_neurons_notes(&nb_couches_notes,
+        //  topologie_notes);
 
-      	switch (type)
-      	{
-		      case(BARRE):
-			      break;
-		      case(CLESOL):
-			      portee->cle = SOL;
-			      break;
-		      case(BEMOL):
-			      size_t i = find_height_box(partition, portee, symbol);
-			      portee->bemol[i]= 1;
-			      break;
-		      case(QUATRE):
-		      case(TROIS):
-			      break;
-		      case(DSOUPIR):
-			      break;
-		      case(NOTE):
-			      append_note(reseau, portee, symbol);
-			      break;
-		      case(CLEFA):
-			      portee->cle = FA;
-            break;
-		      case(POINT):
-			      break;
-		      case(SOUPIR):
-		      case(PAUSE):
-			      break;
-	      }
-        ptr = ptr->next;
+      for(size_t i = 0; i < partition->taille; i++)
+      {
+        struct portee * portee = partition->portees[i];
+        portee->notes = malloc(sizeof(struct list));
+        list_init(portee->notes);    
+        struct list* ptr = portee->symboles->next;
+        while(ptr != NULL)
+        {
+          struct symbol* symbol = (struct symbol*)ptr->data;
+          enum Type type_symb = get_type_symb(res_s, topologie_s,
+              nb_couches_s, symbol);
+          //printf("Type symbole : %s\n", to_string(type_symb));
+          /*SDL_Surface* image =
+            genImgFromMat(get_mat_rect_xN(prey, 
+                  symbol->box, 4));
+          display_image(window,image);
+          printf("Type symbole : %s", to_string(type_symb));
+          sleep(2);
+          SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
+          display_image(window, image);*/
+
+          switch (type_symb)
+          {
+            case(INCONNU):
+            case(BARRE):
+              break;
+            case(CLESOL):
+              portee->cle = SOL;
+              break;
+            case(BEMOL):
+              ;
+              size_t i = (size_t)find_height_box(partition, portee,
+                  symbol->box);
+              portee->bemol[i]= 1;
+              break;
+            case(QUATRE):
+            case(TROIS):
+              break;
+            case(DSOUPIR):
+              break;
+            case(NOTE):
+              ;
+              struct list * list_notes = analyse_note(prey, symbol,
+                  partition->i_ligne);
+              //printf("Longueur de la liste : %zu\n", list_len(list_notes));
+              list_notes = list_notes->next;
+              while (list_notes != NULL)
+              {
+                struct note * note = (struct note*)list_notes->data;
+                //print_symbol(note->symb_note);
+                /*enum Type_N type_note = get_type_note(res_notes, 
+                    nb_couches_notes, topologie_notes, note);
+                switch(type_note)
+                {
+                  case(NOIRE):
+                    note->duree = 1;
+                  case(BLANCHE):
+                    note->duree = 2;
+                    note->t_note = find_height_box(partition,portee,
+                      note->s_note->box);
+                    break;
+                  case(CROCH):
+                    note->duree /= 2;
+                    break;
+                  case(DCROCH):
+                    notes->duree /= 4;
+                    break;
+                }*/
+                //draw_rect(prey, note->symb_note->box);
+                //SDL_Surface* image = genImgFromMat(prey);
+                //display_image(window, image);
+                
+                SDL_Surface* image = genImgFromMat(get_mat_rect_xN(prey, 
+                	note->symb_note->box, 4));
+        			  display_image(window,image);
+        			  printf("Type note : ");
+        			  scanf("%d", &(note->t_note));
+        			  fprintf(file,"%f %f %f %d\n", note->symb_note->nbPasV,
+        			    note->symb_note->nbPasH, note->symb_note->nbPixelNoir, 
+        			  (int)note->t_note);
+        			  SDL_FillRect(image, NULL, 
+                    SDL_MapRGB(image->format, 0, 0, 0));
+        			  display_image(window, image);
+                //struct list * elm = list_notes;
+                //list_insert_note(portee->notes, elm);
+                list_notes = list_notes->next;
+              }
+			        break;
+		        case(CLEFA):
+			        portee->cle = FA;
+              break;
+		        case(POINT):
+			        break;
+		        case(SOUPIR):
+		        case(PAUSE):
+			        break;
+	        }
+          ptr = ptr->next;
+        }
       }
+      SDL_Surface *img = genImgFromMat(prey);
+      save_img(img, "image");
+      fclose(file);
+      free(mat);
+      free(mat_histo);
     }
-    free(mat);
-    free(mat_histo);
-  }
 	else
 	{
     char * path = argv[1];

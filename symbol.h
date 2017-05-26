@@ -4,8 +4,8 @@
 # include <stdio.h>
 # include "SDL_operations.h"
 # include "list.h"
-enum Type { INCONNU, BARRE, CLESOL, BEMOL, QUATRE, TROIS, DSOUPIR, NOTE, CLEFA,
-  POINT, SOUPIR, PAUSE };
+enum Type { INCONNU, BARRE, CLESOL, BEMOL, QUATRE, TROIS, DSOUPIR,
+  NOTE, CLEFA, POINT, SOUPIR, PAUSE };
 struct symbol
 {
 	SDL_Rect* box; 
@@ -20,15 +20,27 @@ void print_list_symbol(struct list * list_symbol);
 size_t* size_list_to_tab(struct list* list, size_t* taille);
 
 enum Note {DO, RE, MI, FA, SOL, LA, SI};
+enum Type_N {NOIRE=1, BLANCHE, CROCH, DCROCH, POINTEE};
 
+struct note
+{
+ enum Type_N t_note;
+ struct symbol * symb_note;
+ int duree;
+};
+
+void list_insert_note(struct list* list, struct list* elm);
+struct list* analyse_note(struct s_matrix* mat, 
+	struct symbol* symbol, size_t pas);
+	
 struct portee
 {
   size_t tab_lignes[5]; // Tableau des lignes hautes de la portée
   enum Note cle; // Clé de la portée
-  int Note diese[7]; // Tableau des dièses à la clé
-  int bemol[7]; // Tableau des bémols à la clé
+  int diese[7]; // Tableau des dièses à la clé
+  int bemol[7]; // TaNresbleau des bémols à la clé
   struct list* symboles; // Liste des symboles contenus dans la portée
-  struct list * notes;
+  struct list* notes;
 };
 
 struct partition {
@@ -39,14 +51,7 @@ struct partition {
   char* encodage;
 };
 
-enum Type_N {NOIR, BLANC, CROCH, DCROCH};
-
-struct note
-{
- enum Type_note t_note;
- SDL_Rect * box;
- int duree;
-}
-
 struct partition * analyse(struct s_matrix* mat, struct list* list);
-# endif
+enum Note find_height_box(struct partition * partition, 
+    struct portee * portee, SDL_Rect * box);
+#endif
