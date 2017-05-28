@@ -24,6 +24,8 @@ enum Type_N {NOIRE=1, BLANCHE, CROCH, DCROCH, POINTEE};
 
 struct note
 {
+ enum Note value;
+ int octave;
  enum Type_N t_note;
  struct symbol * symb_note;
  int duree;
