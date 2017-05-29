@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
                       note->symb_note->box, note);
                     printf("Valeur de la note : %s%d\n", 
                         value_to_string(note->value), note->octave);
+                    generate_txt("partition.txt", note);
                     draw_rect(prey, note->symb_note->box);
                 		image = genImgFromMat(prey);
                 		display_image(window, image);
@@ -115,6 +116,7 @@ int main(int argc, char *argv[])
                       note->symb_note->box, note);
                     printf("Valeur de la note : %s%d\n", 
                         value_to_string(note->value), note->octave);
+                    generate_txt("partition.txt", note);
                     draw_rect(prey, note->symb_note->box);
                 		image = genImgFromMat(prey);
                 		display_image(window, image);    
