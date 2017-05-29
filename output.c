@@ -234,3 +234,146 @@ const char* value_to_string(enum Note value)
   }
 }
 
+void generate_string_note(struct note * note,char *res)
+{
+	switch(note->value)
+	{
+		case(DO):
+			res[0] = 'd';
+			res[1] = 'o';
+			break;
+		case(RE):
+			res[0] = 'r';
+			res[1] = 'e';
+			break;
+		case(MI):
+			res[0] = 'm';
+			res[1] = 'i';
+			break;
+		case(FA):
+			res[0] = 'f';
+			res[1] = 'a';
+			break;
+		case(SOL):
+			res[0] = 's';
+			res[1] = 'o';
+			break;
+		case(LA):
+			res[0] = 'l';
+			res[1] = 'a';
+			break;
+		case(SI):
+			res[0] = 's';
+			res[1] = 'i';
+			break;
+	}
+}
+void generate_space(char * path,struct symbol * symbol)
+{
+	FILE * fichier = fopen(path,"a");
+	switch(symbol->typeNote)
+	{
+		case(6):
+			fprintf(fichier,"%s","   ");
+			break;
+		case(SOUPIR):
+			fprintf(fichier,"%s", "      ");
+			break;
+		case(11):
+			fprintf(fichier,"%s","                  ");
+			break;
+		default:
+		break;
+	}
+	fclose(fichier);
+}
+void generate_txt(char * path, struct note * note)
+{
+	FILE * fichier = fopen(path,"a");
+	char * res = malloc(sizeof(char)*4);
+	switch(note->t_note)
+	{
+		case(NOIRE):
+			generate_string_note(note,res);
+			break;
+		case(BLANCHE):
+			res[0] ='b';
+			break;
+		case(CROCH):
+			res[0] ='c';
+			break;
+		case(DCROCH):
+			res[0] ='c';
+			break;
+		case(POINTEE):
+			res[0] = 'b';
+			break;
+	}
+	if (note->t_note != NOIRE)
+	{
+		switch(note->value)
+		{
+			case(DO):
+				res[1] = 'd';
+				break;
+			case(RE):
+				res[1] = 'r';
+				break;
+			case(MI):
+				res[1] = 'm';
+				break;
+			case(FA):
+				res[1] = 'f';
+				break;
+			case(SOL):
+				res[1] = 'o';
+				break;
+			case(LA):
+				res[1] = 'l';
+				break;
+			case(SI):
+				res[1] = 'i';
+				break;
+		}
+	}
+	switch(note->octave)
+	{
+		case(1):
+			res[2] = '1';
+			break;
+		case(2):
+			res[2] = '2';
+			break;
+		case(3):
+			res[2] = '3';
+			break;
+		case(4):
+			res[2] = '4';
+			break;
+	}
+	res[3]='\0';
+	fprintf(fichier,"%s",res);
+	fclose(fichier);
+}
+
+void test(char * path)
+{
+	struct note * ex1 = malloc(sizeof(struct note));
+	struct note * ex2 = malloc(sizeof(struct note));
+	struct symbol * symbol1 = malloc(sizeof(struct symbol));
+	struct symbol * symbol2 = malloc(sizeof(struct symbol));
+	symbol1->typeNote = PAUSE;
+	symbol2->typeNote = DSOUPIR;
+	ex1->value = SOL;
+	ex2->value = SI;
+	ex1->octave = 2;
+	ex2->octave = 3;
+	ex1->t_note = BLANCHE;
+	ex2->t_note = NOIRE;
+	generate_txt(path,ex1);
+	generate_space(path,symbol1);
+	generate_txt(path,ex2);
+	generate_space(path,symbol2);
+}
+
+

@@ -21,5 +21,9 @@ enum Type_N get_type_note(struct neurone** n, size_t* topologie,
     size_t nb_couches, struct note* note);
 const char* symb_to_string(enum Type type);
 const char* value_to_string(enum Note value);
+void generate_txt(char * path, struct note * note);
+void generate_string_note(struct note * note,char * res);
+void generate_space(char *path, struct symbol * symbol);
+void test(char * path);
 void save_img(SDL_Surface * img,char * name);
 # endif
