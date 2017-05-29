@@ -290,7 +290,7 @@ void generate_space(char * path,struct symbol * symbol)
 void generate_txt(char * path, struct note * note)
 {
 	FILE * fichier = fopen(path,"a");
-	char * res = malloc(sizeof(char)*4);
+	char * res = calloc('\0',sizeof(char)*3);
 	switch(note->t_note)
 	{
 		case(NOIRE):
@@ -307,6 +307,8 @@ void generate_txt(char * path, struct note * note)
 			break;
 		case(POINTEE):
 			res[0] = 'b';
+			break;
+		case(INCONNUE):
 			break;
 	}
 	if (note->t_note != NOIRE)
@@ -351,7 +353,7 @@ void generate_txt(char * path, struct note * note)
 			res[2] = '4';
 			break;
 	}
-	res[3]='\0';
+//	res[3]='\0';
 	fprintf(fichier,"%s",res);
 	fclose(fichier);
 }

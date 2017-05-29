@@ -222,7 +222,7 @@ enum Note find_height_box(struct partition * partition,
   	int dans = 0;
   	while (portee->tab_lignes[0] + 
   		dans*(partition->h_ligne + partition->i_ligne/3)
-        < box->x + box->h)
+        <(size_t) box->x + box->h)
   		dans++;
   	if(portee->cle == SOL)
 		{
@@ -313,77 +313,6 @@ enum Note find_height_box(struct partition * partition,
 			 }	
 		}
 	}
-			
-  /*	for(size_t i = 0; i < 4; i++)
-  	{
-  		if (box->x+box->h > portee->tab_lignes[i]
-  				&& box->x + box->h - partition->h_ligne 
-          < portee->tab_lignes[i+1])
-      {
-				if(portee->cle == SOL)
-				{
-				  switch(i)
-				  {
-            case 0:
-              return MI;
-					  case 1:
-					  	return DO;
-					  case 2:
-						  return LA;
-					  case 3:
-						  return RE;
-				  }
-				}
-				else
-				{
-				  switch(i)
-				  {
-            case 0:
-              return SOL;
-					  case 1:
-					  	return MI;
-					  case 2:
-						  return DO;
-					  case 3:
-						  return LA;
-				  }
-			  }
-		  }
-		  else
-		  {
-		  	if (box->x+box->h - partition->i_ligne/2 < portee->tab_lignes[i])		
-			  if(portee->cle == SOL)
-			  {
-				  switch(i)
-				  {
-					  case 0:
-						  return FA;
-					  case 1:
-						  return RE;
-					  case 2:
-						  return SI;
-					  case 3:
-						  return SOL;
-				  }
-			  }
-			  else
-			  {
-				  switch(i)
-          {
-				    case 0:
-					    return LA;
-					  case 1:
-						  return FA;
-            case 2:
-					    return RE;
-					  case 3:
-						  return SI;
-		
-				  }
-			  }
-		  }
-    }
-  }*/
   return DO;
 }
 
@@ -422,9 +351,9 @@ struct list * analyse_note(struct s_matrix* mat,
 {
 	struct list * list_notes = malloc(sizeof(struct list));
   list_init(list_notes);
-  for (size_t i = symbol->box->x; i < symbol->box->x + symbol->box->h;
+  for (size_t i = symbol->box->x; (int)i < symbol->box->x + symbol->box->h;
       i++)
-    for (size_t j = symbol->box->y; j < symbol->box->y + symbol->box->w;
+    for (size_t j = symbol->box->y; (int) j < symbol->box->y + symbol->box->w;
         j++)
     {
 	    if (mat->data[i*mat->cols + j] == VERT)

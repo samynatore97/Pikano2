@@ -176,7 +176,7 @@ void propage_erreur_arriere(struct neurone **n, size_t *topologie,
 
 			for(k=0;k<topologie[i+1];k++)
 				erreur+= n[i+1][k].erreur * n[i][j].w[k];
-				n[i][j].erreur = erreur * derivee(n[i][j].sortie);
+			n[i][j].erreur = erreur * derivee(n[i][j].sortie);
 		}
 	}
 }
@@ -382,7 +382,7 @@ int evalue(struct neurone** n, size_t* topologie, size_t nb_couches)
 {
   double max = 0.0;
   int index = 0;
-  for(int i=0; i < topologie[nb_couches-1]; i++)
+  for(int i=0; (size_t)i < topologie[nb_couches-1]; i++)
   {
     if (n[nb_couches-1][i].sortie > max)
     {

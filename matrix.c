@@ -223,13 +223,13 @@ void propa_note(struct s_matrix* mat, size_t i, size_t j, SDL_Rect* limit, SDL_R
         || box->y < (int) j - box->w + 1)
       box->w++;
     box->y = MIN((int)j, box->y);
-    if (i < limit->x + limit->h - 1)
+    if ((int)i < limit->x + limit->h - 1)
       propa_note(mat, i+1, j, limit, box, pixels,col_source, col_res);
-    if (i > limit->x)
+    if ((int) i > limit->x)
       propa_note(mat, i-1, j, limit, box, pixels, col_source, col_res);
-    if (j < limit->y + limit->w - 1)
+    if ((int) j < limit->y + limit->w - 1)
       propa_note(mat, i, j+1, limit, box, pixels, col_source, col_res);
-    if (j > limit->y)
+    if ((int)j > limit->y)
       propa_note(mat, i, j-1, limit,box, pixels, col_source, col_res);
   }
 }
