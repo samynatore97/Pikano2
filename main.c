@@ -33,53 +33,30 @@ int main(int argc, char *argv[])
     struct partition * partition = analyse(prey, lst_lines);
     SDL_Surface *im = genImgFromMat(prey);
     save_img(im,"prey");
-    FILE* file = NULL;
-    replace_extension(path);
-    file = fopen(path, "w");
-    if (file == NULL)
-      errx(3, "Couldn't open file %s\n", path);
-   /* for(size_t i = 0; i< partition->taille; i++)
-    {
-        struct list* ptr = partition->portees[i]->symboles->next;
-        while(ptr != NULL)
-        {
-          struct symbol* ptr_data = (struct symbol*)ptr->data;
-          SDL_Surface* image =
-            genImgFromMat(get_mat_rect_xN(prey, 
-                  ptr_data->box, 4));
-          display_image(window,image);
-          printf("Type symbole : ");
-          scanf("%d", 
-              &(ptr_data->typeNote));
-          fprintf(file,"%f %f %f %zu %d\n", ptr_data->nbPasV, ptr_data->nbPasH,
-              ptr_data->nbPixelNoir, ptr_data->nbCol, ptr_data->typeNote);
-          SDL_FillRect(image, NULL, SDL_MapRGB(graph->format, 0, 0, 0));
-          display_image(window, image);
-          ptr = ptr->next;
-        }
-      }
-      fclose(file);*/
-      size_t nb_couches_s = 5;
-      size_t topologie_s[5] = {4,120,90,60,11};
-      struct neurone** res_s;
-      alloc_reseau(&res_s, topologie_s, nb_couches_s);
-      load_neurons(res_s, topologie_s, nb_couches_s);
-      //size_t nb_couches_notes =;
-      //size_t topologie_notes =;
-      //struct neurones** res_notes = load_neurons_notes(&nb_couches_notes,
-        //  topologie_notes);
 
-      for(size_t i = 0; i < partition->taille; i++)
+    size_t nb_couches_s = 5;
+    size_t topologie_s[5] = {4,120,90,60,11};
+    struct neurone** res_s;
+    alloc_reseau(&res_s, topologie_s, nb_couches_s);
+    load_neurons("./reseau/reseau_symb.txt", res_s, 
+        topologie_s, nb_couches_s);
+    size_t nb_couches_n = 4;
+    size_t topologie_n[4] = {3, 100, 100, 6};
+    struct neurone** res_n;
+    alloc_reseau(&res_n, topologie_n, nb_couches_n);
+    load_neurons("./reseau/reseau_note.txt", res_n,
+        topologie_n, nb_couches_n);
+    for(size_t i = 0; i < partition->taille; i++)
+    {
+      struct portee * portee = partition->portees[i];
+      portee->notes = malloc(sizeof(struct list));
+      list_init(portee->notes);    
+      struct list* ptr = portee->symboles->next;
+      while(ptr != NULL)
       {
-        struct portee * portee = partition->portees[i];
-        portee->notes = malloc(sizeof(struct list));
-        list_init(portee->notes);    
-        struct list* ptr = portee->symboles->next;
-        while(ptr != NULL)
-        {
-          struct symbol* symbol = (struct symbol*)ptr->data;
-          enum Type type_symb = get_type_symb(res_s, topologie_s,
-              nb_couches_s, symbol);
+        struct symbol* symbol = (struct symbol*)ptr->data;
+        enum Type type_symb = get_type_symb(res_s, topologie_s,
+          nb_couches_s, symbol);
           //printf("Type symbole : %s\n", to_string(type_symb));
           /*SDL_Surface* image =
             genImgFromMat(get_mat_rect_xN(prey, 
@@ -92,7 +69,6 @@ int main(int argc, char *argv[])
 
           switch (type_symb)
           {
-            case(INCONNU):
             case(BARRE):
               break;
             case(CLESOL):
@@ -101,7 +77,7 @@ int main(int argc, char *argv[])
             case(BEMOL):
               ;
               size_t i = (size_t)find_height_box(partition, portee,
-                  symbol->box);
+                  symbol->box, NULL);
               portee->bemol[i]= 1;
               break;
             case(QUATRE):
@@ -111,6 +87,7 @@ int main(int argc, char *argv[])
               break;
             case(NOTE):
               ;
+              SDL_Surface* image;
               struct list * list_notes = analyse_note(prey, symbol,
                   partition->i_ligne);
               //printf("Longueur de la liste : %zu\n", list_len(list_notes));
@@ -118,42 +95,47 @@ int main(int argc, char *argv[])
               while (list_notes != NULL)
               {
                 struct note * note = (struct note*)list_notes->data;
-                //print_symbol(note->symb_note);
-                /*enum Type_N type_note = get_type_note(res_notes, 
-                    nb_couches_notes, topologie_notes, note);
+                enum Type_N type_note = get_type_note(res_n, 
+                 topologie_n, nb_couches_n, note);
                 switch(type_note)
                 {
                   case(NOIRE):
                     note->duree = 1;
+                    note->value = find_height_box(partition,portee,
+                      note->symb_note->box, note);
+                    printf("Valeur de la note : %s%d\n", 
+                        value_to_string(note->value), note->octave);
+                    draw_rect(prey, note->symb_note->box);
+                		image = genImgFromMat(prey);
+                		display_image(window, image);
+                    break;
                   case(BLANCHE):
                     note->duree = 2;
-                    note->t_note = find_height_box(partition,portee,
-                      note->s_note->box);
+                    note->value = find_height_box(partition,portee,
+                      note->symb_note->box, note);
+                    printf("Valeur de la note : %s%d\n", 
+                        value_to_string(note->value), note->octave);
+                    draw_rect(prey, note->symb_note->box);
+                		image = genImgFromMat(prey);
+                		display_image(window, image);    
                     break;
                   case(CROCH):
-                    note->duree /= 2;
                     break;
                   case(DCROCH):
-                    notes->duree /= 4;
                     break;
-                }*/
+                  case(POINTEE):
+                    break;
+                  case(INCONNUE):
+                    break;
+                }
                 //draw_rect(prey, note->symb_note->box);
                 //SDL_Surface* image = genImgFromMat(prey);
                 //display_image(window, image);
                 
-                SDL_Surface* image = genImgFromMat(get_mat_rect_xN(prey, 
-                	note->symb_note->box, 4));
-        			  display_image(window,image);
-        			  printf("Type note : ");
-        			  scanf("%d", &(note->t_note));
-        			  fprintf(file,"%f %f %f %d\n", note->symb_note->nbPasV,
-        			    note->symb_note->nbPasH, note->symb_note->nbPixelNoir, 
-        			  (int)note->t_note);
-        			  SDL_FillRect(image, NULL, 
-                    SDL_MapRGB(image->format, 0, 0, 0));
-        			  display_image(window, image);
+                
                 //struct list * elm = list_notes;
                 //list_insert_note(portee->notes, elm);
+                //append_file_note("exemples_notes.txt",note, prey, window);
                 list_notes = list_notes->next;
               }
 			        break;
@@ -165,17 +147,19 @@ int main(int argc, char *argv[])
 		        case(SOUPIR):
 		        case(PAUSE):
 			        break;
+            case(INCONNU):
+              break;
 	        }
           ptr = ptr->next;
         }
       }
-      SDL_Surface *img = genImgFromMat(prey);
-      save_img(img, "image");
-      fclose(file);
+      //SDL_Surface *img = genImgFromMat(prey);
+      //save_img(img, "image");
+      //fclose(file);
       free(mat);
       free(mat_histo);
     }
-	else
+	/*else
 	{
     char * path = argv[1];
     size_t nb_couches;
@@ -239,7 +223,7 @@ int main(int argc, char *argv[])
       scanf("%c", &rep);
     }
     save_neurons(reseau, (size_t*)topologie, nb_couches);
-  }
+  }*/
   SDL_Quit();
   return 0; 
 }

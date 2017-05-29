@@ -4,8 +4,8 @@
 # include <stdio.h>
 # include "SDL_operations.h"
 # include "list.h"
-enum Type { INCONNU, BARRE, CLESOL, BEMOL, QUATRE, TROIS, DSOUPIR,
-  NOTE, CLEFA, POINT, SOUPIR, PAUSE };
+enum Type { BARRE=1, CLESOL, BEMOL, QUATRE, TROIS, DSOUPIR,
+  NOTE, CLEFA, POINT, SOUPIR, PAUSE, INCONNU};
 struct symbol
 {
 	SDL_Rect* box; 
@@ -20,7 +20,7 @@ void print_list_symbol(struct list * list_symbol);
 size_t* size_list_to_tab(struct list* list, size_t* taille);
 
 enum Note {DO, RE, MI, FA, SOL, LA, SI};
-enum Type_N {NOIRE=1, BLANCHE, CROCH, DCROCH, POINTEE};
+enum Type_N {NOIRE=1, BLANCHE, CROCH, DCROCH, POINTEE,INCONNUE};
 
 struct note
 {
@@ -55,5 +55,5 @@ struct partition {
 
 struct partition * analyse(struct s_matrix* mat, struct list* list);
 enum Note find_height_box(struct partition * partition, 
-    struct portee * portee, SDL_Rect * box);
+    struct portee * portee, SDL_Rect * box, struct note* note);
 #endif

@@ -176,144 +176,215 @@ struct partition * analyse(struct s_matrix* mat, struct list* histo)
 }
 
 enum Note find_height_box(struct partition * partition,
-    struct portee * portee, SDL_Rect * box)
+    struct portee * portee, SDL_Rect * box, struct note* note)
 {
-	enum Note res;
-  if (box->x + box->h + partition->h_ligne < portee->tab_lignes[0])
+  if (box->x + box->h - partition->h_ligne < portee->tab_lignes[0])
   {
     int up = 1;
-    while (box->x + box->h + up * partition->i_ligne/4 < 
-        portee->tab_lignes[0])
+    while (portee->tab_lignes[0] > 
+        box->x + box->h + up * (partition->i_ligne/3 + partition->h_ligne))
       up++;
     if (portee->cle == SOL)
     {
+      if (note != NULL)
+        note->octave = 4;
       switch(up)
       {
-        case(1):
-          res = SOL;
-          break;
-        case(2):
-          res = LA;
-          break;
-        case(3):
-          res = SI;
-          break;
-        case(4):
-          res = DO;
-          break;
+        case 1:
+          return LA;
+        case 2:
+          return SI;
+        case 3:
+          return DO;
+        case 4:
+          return RE;
       }
     }
     else
     {
+      if (note != NULL)
+        note->octave = 3;
       switch(up)
       {
-        case(1):
-          res = SI;
-          break;
-        case(2):
-          res = DO;
-          break;
-        case(3):
-          res = RE;
-          break;
-        case(4):
-          res = MI;
-          break;
+        case 1:
+          return DO;
+        case 2:
+          return RE;
+        case 3:
+          return MI;
+        case 4:
+          return FA;
       }
     }
   }
   else
   {
-	  for(size_t i = 0 ; i < 5; i++)
-	  {
-	  	if(box->x + box->h + partition->h_ligne - portee->tab_lignes[i]
-          < partition->i_ligne/4)
-	  	{
-		  	if(portee->cle == SOL)
-		  	{
-			  	switch(i)
-				  {
-					  case(1):
-						  res = SI;
-						  break;
-					  case(2):
-						  res = DO;
-						  break;
-					  case(3):
-						  res = LA;
-						  break;
-            case(4):
-						  res = FA;
-						  break;
-				  }
-			  }
-			  else
-			  {
+  	int dans = 0;
+  	while (portee->tab_lignes[0] + 
+  		dans*(partition->h_ligne + partition->i_ligne/3)
+        < box->x + box->h)
+  		dans++;
+  	if(portee->cle == SOL)
+		{
+      if (note != NULL)
+        note->octave = 4;
+			switch(dans)
+			{
+        case 1:
+          return SOL;
+				case 2:
+					return FA;
+				case 3:
+					return MI;
+				case 4:
+					return RE;
+			  case 5:
+			  	return DO;
+			  case 6:
+          if (note != NULL)
+            note->octave = 3;
+			  	return SI;
+			  case 7:
+          if (note != NULL)
+            note->octave = 3;
+			  	return LA;
+			  case 8:
+			  	if (note != NULL)
+            note->octave = 3;
+			  	return SOL;
+			  case 9:
+			  	if (note != NULL)
+            note->octave = 3;
+			  	return FA;
+			  case 10:
+			  	if (note != NULL)
+            note->octave = 3;
+			  	return MI;
+			  case 11:
+			  	if (note != NULL)
+            note->octave = 3;
+			  	return RE;
+			  case 12:
+			  	if (note != NULL)
+            note->octave = 3;
+			  	return DO;
+			}
+		}	
+		else if (portee->cle == FA)
+		{
+			if (note != NULL)
+            note->octave = 2;
+			switch(dans)
+			{
+        case 1:
+          return SI;
+				case 2:
+					return LA;
+				case 3:
+					return SOL;
+				case 4:
+					return FA;
+			  case 5:
+			  	return MI;
+			  case 6:
+			  	return RE;
+			  case 7:
+			  	return DO;
+			  case 8:
+			  	if (note != NULL)
+            note->octave = 1;
+			  	return SI;
+			  case 9:
+			  	if (note != NULL)
+            note->octave = 1;
+			  	return LA;
+			  case 10:
+			  	if (note != NULL)
+            note->octave = 1;
+			  	return SOL;
+			  case 11:
+			  	if (note != NULL)
+            note->octave = 1;
+			  	return FA;
+			  case 12:
+			  	if (note != NULL)
+            note->octave = 1;
+			  	return MI;
+			 }	
+		}
+	}
+			
+  /*	for(size_t i = 0; i < 4; i++)
+  	{
+  		if (box->x+box->h > portee->tab_lignes[i]
+  				&& box->x + box->h - partition->h_ligne 
+          < portee->tab_lignes[i+1])
+      {
+				if(portee->cle == SOL)
+				{
 				  switch(i)
 				  {
-					  case(1):
-					  	res = SOL;
-						  break;
-					  case(2):
-						  res = MI;
-						  break;
-					  case(3):
-						  res = DO;
-						  break;
-					  case(4):
-						  res = LA;
-						  break;
+            case 0:
+              return MI;
+					  case 1:
+					  	return DO;
+					  case 2:
+						  return LA;
+					  case 3:
+						  return RE;
+				  }
+				}
+				else
+				{
+				  switch(i)
+				  {
+            case 0:
+              return SOL;
+					  case 1:
+					  	return MI;
+					  case 2:
+						  return DO;
+					  case 3:
+						  return LA;
 				  }
 			  }
 		  }
 		  else
 		  {
+		  	if (box->x+box->h - partition->i_ligne/2 < portee->tab_lignes[i])		
 			  if(portee->cle == SOL)
 			  {
 				  switch(i)
-					{
-						case(0):
-							res = FA;
-							break;
-						case(1):
-							res = RE;
-							break;
-						case(2):
-							res = SI;
-							break;
-					  case(3):
-							res = SOL;
-							break;
-						case(4):
-							res = MI;
-							 break;
-					}
-				}
+				  {
+					  case 0:
+						  return FA;
+					  case 1:
+						  return RE;
+					  case 2:
+						  return SI;
+					  case 3:
+						  return SOL;
+				  }
+			  }
 			  else
 			  {
 				  switch(i)
-			  	{
-				  	case(0):
-					  	res = LA;
-						  break;
-					  case(1):
-						  res = FA;
-					  	break;
-				  	case(2):
-					  	res = RE;
-						  break;
-					  case(3):
-						  res = SI;
-						  break;
-					  case(4):
-						  res = SOL;
-						  break;
+          {
+				    case 0:
+					    return LA;
+					  case 1:
+						  return FA;
+            case 2:
+					    return RE;
+					  case 3:
+						  return SI;
+		
 				  }
 			  }
 		  }
     }
-  }
-	return res;
+  }*/
+  return DO;
 }
 
 struct note * init_note(size_t x, size_t y)

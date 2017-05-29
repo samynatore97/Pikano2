@@ -16,7 +16,7 @@ struct neurone
 #define SEUIL     0.5 /* Seuil pour vrai/faux */
 
 #define  MAX_ITER2  100000
-#define EPSILON 0.1 /* Pas d'apprentissage */
+#define EPSILON 0.01 /* Pas d'apprentissage */
 
 int alloc_reseau(struct neurone*** n, size_t* topologie, 
     size_t nb_couches);
