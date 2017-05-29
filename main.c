@@ -22,17 +22,21 @@ int main(int argc, char *argv[])
     //sleep(5);
 	  struct s_matrix * mat = genMatFromImg(partitionBW);
     struct s_matrix * mat_histo = histo_hori(mat);
+    SDL_Surface *img1 = genImgFromMat(mat_histo);
+    save_img(img1,"demonstration/histogramme1");
 	  //display_image(genImgFromMat(mat_histo));
     //sleep(5);
     struct list *lst_lines = list_lines(mat_histo);
    //repare_lines(mat, lst_lines);
 	  struct s_matrix* mat_color_lines = color_lines(mat, lst_lines);
+	  SDL_Surface * img2 = genImgFromMat(mat_color_lines);
+	  save_img(img2,"demonstration/coloration2");
     //display_image(genImgFromMat(mat_color_lines));
 	  //sleep(5);
 	  struct s_matrix *prey = color_graph(mat_color_lines, lst_lines);
     struct partition * partition = analyse(prey, lst_lines);
     SDL_Surface *im = genImgFromMat(prey);
-    save_img(im,"prey");
+    save_img(im,"demonstration/grapheme_identification3");
 
     size_t nb_couches_s = 5;
     size_t topologie_s[5] = {4,120,90,60,11};
@@ -95,17 +99,18 @@ int main(int argc, char *argv[])
               while (list_notes != NULL)
               {
                 struct note * note = (struct note*)list_notes->data;
-                enum Type_N type_note = get_type_note(res_n, 
+                note->t_note = get_type_note(res_n, 
                  topologie_n, nb_couches_n, note);
-                switch(type_note)
+                switch(note->t_note)
                 {
                   case(NOIRE):
                     note->duree = 1;
+                    
                     note->value = find_height_box(partition,portee,
                       note->symb_note->box, note);
                     printf("Valeur de la note : %s%d\n", 
                         value_to_string(note->value), note->octave);
-                    generate_txt("partition.txt", note);
+										 generate_txt("partition.txt",note);
                     draw_rect(prey, note->symb_note->box);
                 		image = genImgFromMat(prey);
                 		display_image(window, image);
@@ -116,7 +121,7 @@ int main(int argc, char *argv[])
                       note->symb_note->box, note);
                     printf("Valeur de la note : %s%d\n", 
                         value_to_string(note->value), note->octave);
-                    generate_txt("partition.txt", note);
+										 generate_txt("partition.txt",note);                   
                     draw_rect(prey, note->symb_note->box);
                 		image = genImgFromMat(prey);
                 		display_image(window, image);    
@@ -138,6 +143,7 @@ int main(int argc, char *argv[])
                 //struct list * elm = list_notes;
                 //list_insert_note(portee->notes, elm);
                 //append_file_note("exemples_notes.txt",note, prey, window);
+               
                 list_notes = list_notes->next;
               }
 			        break;
@@ -155,8 +161,8 @@ int main(int argc, char *argv[])
           ptr = ptr->next;
         }
       }
-      //SDL_Surface *img = genImgFromMat(prey);
-      //save_img(img, "image");
+      SDL_Surface *img3 = genImgFromMat(prey);
+      save_img(img3, "demonstration/final4");
       //fclose(file);
       free(mat);
       free(mat_histo);
